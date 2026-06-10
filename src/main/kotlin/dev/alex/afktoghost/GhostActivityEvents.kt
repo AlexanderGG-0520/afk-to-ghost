@@ -10,34 +10,34 @@ import net.minecraft.world.InteractionResult
 import org.slf4j.Logger
 
 object GhostActivityEvents {
-    fun register(afkTracker: AfkTracker, logger: Logger) {
+    fun register(afkTracker: () -> AfkTracker, logger: Logger) {
         UseItemCallback.EVENT.register { player, _, _ ->
-            wake(player, afkTracker, "item use")
+            wake(player, afkTracker(), "item use")
             InteractionResult.PASS
         }
 
         UseBlockCallback.EVENT.register { player, _, _, _ ->
-            wake(player, afkTracker, "block use")
+            wake(player, afkTracker(), "block use")
             InteractionResult.PASS
         }
 
         AttackEntityCallback.EVENT.register { player, _, _, _, _ ->
-            wake(player, afkTracker, "entity attack")
+            wake(player, afkTracker(), "entity attack")
             InteractionResult.PASS
         }
 
         AttackBlockCallback.EVENT.register { player, _, _, _, _ ->
-            wake(player, afkTracker, "block attack")
+            wake(player, afkTracker(), "block attack")
             InteractionResult.PASS
         }
 
         ServerMessageEvents.CHAT_MESSAGE.register { _, player, _ ->
-            afkTracker.markActivity(player, "chat")
+            afkTracker().markActivity(player, "chat")
         }
 
         ServerMessageEvents.COMMAND_MESSAGE.register { _, source, _ ->
             source.player?.let { player ->
-                afkTracker.markActivity(player, "command")
+                afkTracker().markActivity(player, "command")
             }
         }
 

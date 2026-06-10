@@ -1,6 +1,6 @@
 package dev.alex.afktoghost
 
-import net.fabricmc.api.DedicatedServerModInitializer
+import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-object AfkToGhostMod : DedicatedServerModInitializer {
+object AfkToGhostMod : ModInitializer {
     const val MOD_ID = "afk-to-ghost"
 
     val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
@@ -16,8 +16,10 @@ object AfkToGhostMod : DedicatedServerModInitializer {
     private lateinit var config: AfkGhostConfig
     private lateinit var ghostManager: GhostManager
     private lateinit var afkTracker: AfkTracker
+    @Volatile
+    private var serverRunning = false
 
-    override fun onInitializeServer() {
+    override fun onInitialize() {
         config = AfkGhostConfig.load(LOGGER)
         ghostManager = GhostManager(config, LOGGER)
         afkTracker = AfkTracker(config, ghostManager, LOGGER)
@@ -27,6 +29,7 @@ object AfkToGhostMod : DedicatedServerModInitializer {
         )
 
         ServerLifecycleEvents.SERVER_STARTED.register { server ->
+            serverRunning = true
             LOGGER.info("AFK to Ghost initialized on server tick {}", server.tickCount)
         }
 
@@ -45,7 +48,29 @@ object AfkToGhostMod : DedicatedServerModInitializer {
             ghostManager.clear("server stopping")
         }
 
-        GhostActivityEvents.register(afkTracker, LOGGER)
+        ServerLifecycleEvents.SERVER_STOPPED.register { _ ->
+            serverRunning = false
+        }
+
+        GhostActivityEvents.register({ afkTracker }, LOGGER)
+    }
+
+    fun currentConfig(): AfkGhostConfig {
+        return if (::config.isInitialized) config else AfkGhostConfig.load(LOGGER)
+    }
+
+    fun saveConfigFromScreen(newConfig: AfkGhostConfig): Boolean {
+        val saved = AfkGhostConfig.save(newConfig, LOGGER)
+        if (saved && !serverRunning) {
+            config = newConfig
+            ghostManager = GhostManager(config, LOGGER)
+            afkTracker = AfkTracker(config, ghostManager, LOGGER)
+        }
+        return saved
+    }
+
+    fun configChangesRequireWorldRestart(): Boolean {
+        return serverRunning
     }
 
     @JvmStatic

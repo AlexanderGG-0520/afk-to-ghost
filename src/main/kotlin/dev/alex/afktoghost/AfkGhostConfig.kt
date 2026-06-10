@@ -22,7 +22,7 @@ data class AfkGhostConfig(
         private val gson = GsonBuilder().setPrettyPrinting().create()
 
         fun load(logger: Logger): AfkGhostConfig {
-            val path = FabricLoader.getInstance().configDir.resolve("afk-to-ghost.json")
+            val path = configPath()
             val defaults = AfkGhostConfig()
 
             return try {
@@ -48,6 +48,33 @@ data class AfkGhostConfig(
                 logger.error("Could not load AFK to Ghost config at {}; using defaults", path, error)
                 defaults
             }
+        }
+
+        fun save(config: AfkGhostConfig, logger: Logger): Boolean {
+            val path = configPath()
+            return try {
+                path.parent?.let(Files::createDirectories)
+                Files.newBufferedWriter(path).use { writer ->
+                    gson.toJson(config, writer)
+                }
+                logger.info(
+                    "AFK to Ghost config saved to {}: timeoutSeconds={}, debug={}, invisibility={}, invulnerable={}, actionbar={}",
+                    path,
+                    config.timeoutSeconds,
+                    config.debug,
+                    config.invisibility,
+                    config.invulnerable,
+                    config.actionbar,
+                )
+                true
+            } catch (error: IOException) {
+                logger.error("Could not save AFK to Ghost config at {}", path, error)
+                false
+            }
+        }
+
+        private fun configPath(): Path {
+            return FabricLoader.getInstance().configDir.resolve("afk-to-ghost.json")
         }
 
         private fun ensureConfigExists(path: Path, defaults: AfkGhostConfig) {
