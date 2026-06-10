@@ -16,6 +16,8 @@ object AfkToGhostMod : ModInitializer {
     private lateinit var config: AfkGhostConfig
     private lateinit var ghostManager: GhostManager
     private lateinit var afkTracker: AfkTracker
+    @Volatile
+    private var serverRunning = false
 
     override fun onInitialize() {
         config = AfkGhostConfig.load(LOGGER)
@@ -27,6 +29,7 @@ object AfkToGhostMod : ModInitializer {
         )
 
         ServerLifecycleEvents.SERVER_STARTED.register { server ->
+            serverRunning = true
             LOGGER.info("AFK to Ghost initialized on server tick {}", server.tickCount)
         }
 
@@ -45,7 +48,29 @@ object AfkToGhostMod : ModInitializer {
             ghostManager.clear("server stopping")
         }
 
-        GhostActivityEvents.register(afkTracker, LOGGER)
+        ServerLifecycleEvents.SERVER_STOPPED.register { _ ->
+            serverRunning = false
+        }
+
+        GhostActivityEvents.register({ afkTracker }, LOGGER)
+    }
+
+    fun currentConfig(): AfkGhostConfig {
+        return if (::config.isInitialized) config else AfkGhostConfig.load(LOGGER)
+    }
+
+    fun saveConfigFromScreen(newConfig: AfkGhostConfig): Boolean {
+        val saved = AfkGhostConfig.save(newConfig, LOGGER)
+        if (saved && !serverRunning) {
+            config = newConfig
+            ghostManager = GhostManager(config, LOGGER)
+            afkTracker = AfkTracker(config, ghostManager, LOGGER)
+        }
+        return saved
+    }
+
+    fun configChangesRequireWorldRestart(): Boolean {
+        return serverRunning
     }
 
     @JvmStatic

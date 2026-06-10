@@ -54,6 +54,8 @@ Fields:
 - `invulnerable`: enables damage protection during AFK Ghost mode, default `true`
 - `actionbar`: enables title/actionbar feedback, default `true`
 
+Mod Menu is optional. A singleplayer, e4mc, or LAN host can install Mod Menu and Cloth Config locally to edit these settings from the client. Dedicated server administrators can continue editing the configuration file directly.
+
 ## Supported Languages
 
 AFK to Ghost is fully server-side and sends resolved text using the locale reported by each player.
