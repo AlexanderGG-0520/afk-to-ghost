@@ -2,7 +2,7 @@
   "required": true,
   "package": "dev.alex.afktoghost.mixin",
   "compatibilityLevel": "JAVA_25",
-  "server": [
+  "mixins": [
     "GhostDamageMixin"
   ],
   "injectors": {

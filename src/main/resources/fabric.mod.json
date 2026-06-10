@@ -6,9 +6,9 @@
   "description": "Turns AFK players into safe, invisible ghosts.",
   "authors": ["alex"],
   "license": "MIT",
-  "environment": "server",
+  "environment": "*",
   "entrypoints": {
-    "server": [
+    "main": [
       {
         "adapter": "kotlin",
         "value": "dev.alex.afktoghost.AfkToGhostMod"

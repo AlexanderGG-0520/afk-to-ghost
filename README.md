@@ -8,7 +8,7 @@ Players sometimes step away briefly or become unable to react. AFK to Ghost exis
 
 ## Features
 
-- Server-side only; clients do not need to install the mod.
+- Server-side gameplay logic; joining players do not need to install the mod.
 - Detects inactivity from server-side movement and look direction.
 - Keeps the player's original game mode unchanged.
 - Applies invisibility during AFK Ghost mode when enabled.
@@ -28,14 +28,15 @@ This mod does not use Minecraft Spectator mode. It does not provide flight, wall
 
 ## Installation
 
-1. Install Fabric Loader for Minecraft 26.1.2 on the server.
-2. Install the Fabric API and Fabric Language Kotlin versions used and tested by release `0.1.0`:
+1. Install Fabric Loader for Minecraft 26.1.2 on the server or hosting client.
+2. Install the Fabric API and Fabric Language Kotlin versions used and tested by release `0.2.0`:
    - Fabric Loader `0.18.6`
    - Fabric API `0.151.0+26.1.2`
    - Fabric Language Kotlin `1.13.12+kotlin.2.4.0`
-3. Place the AFK to Ghost jar in the server's `mods` directory.
-4. Start the server.
-5. Do not install the mod on player clients; it is server-side only.
+3. For a dedicated server, place the AFK to Ghost jar in the server's `mods` directory.
+4. For e4mc or LAN hosting, place the jar in the hosting player's client `mods` directory.
+5. Start the server or hosted world.
+6. Joining players do not need to install the mod.
 
 ## Configuration
 
@@ -71,7 +72,7 @@ English is used as the fallback for unsupported or unavailable locales.
 
 - Minecraft: `26.1.2`
 - Mod loader: Fabric
-- Environment: dedicated server
+- Environment: dedicated server or integrated server hosted from a Fabric client
 - Implementation language: Kotlin
 - Java target: `25`
 

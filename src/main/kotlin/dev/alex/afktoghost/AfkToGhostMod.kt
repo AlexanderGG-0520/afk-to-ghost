@@ -1,6 +1,6 @@
 package dev.alex.afktoghost
 
-import net.fabricmc.api.DedicatedServerModInitializer
+import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-object AfkToGhostMod : DedicatedServerModInitializer {
+object AfkToGhostMod : ModInitializer {
     const val MOD_ID = "afk-to-ghost"
 
     val LOGGER: Logger = LoggerFactory.getLogger(MOD_ID)
@@ -17,7 +17,7 @@ object AfkToGhostMod : DedicatedServerModInitializer {
     private lateinit var ghostManager: GhostManager
     private lateinit var afkTracker: AfkTracker
 
-    override fun onInitializeServer() {
+    override fun onInitialize() {
         config = AfkGhostConfig.load(LOGGER)
         ghostManager = GhostManager(config, LOGGER)
         afkTracker = AfkTracker(config, ghostManager, LOGGER)
