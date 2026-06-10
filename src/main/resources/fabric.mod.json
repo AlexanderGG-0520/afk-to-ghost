@@ -9,7 +9,10 @@
   "environment": "server",
   "entrypoints": {
     "server": [
-      "dev.alex.afktoghost.AfkToGhostMod"
+      {
+        "adapter": "kotlin",
+        "value": "dev.alex.afktoghost.AfkToGhostMod"
+      }
     ]
   },
   "mixins": [

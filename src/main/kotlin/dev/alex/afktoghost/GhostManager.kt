@@ -1,6 +1,8 @@
 package dev.alex.afktoghost
 
-import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket
+import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
@@ -25,6 +27,7 @@ class GhostManager(
         hadInvisibility[uuid] = player.hasEffect(MobEffects.INVISIBILITY)
         applyGhostEffects(player)
         protectFromAccidents(player)
+        sendEnterTitle(player)
 
         logger.info(
             "{} entered AFK ghost mode at tick {} with game mode {}",
@@ -43,7 +46,7 @@ class GhostManager(
         protectFromAccidents(player)
 
         if (config.actionbar && tick % 40L == 0L) {
-            player.sendOverlayMessage(Component.literal("AFK Ghost"))
+            player.sendOverlayMessage(GhostMessages.actionbar(player))
         }
     }
 
@@ -61,6 +64,7 @@ class GhostManager(
 
         val entered = enteredAtTick.remove(uuid)
         val durationSeconds = entered?.let { (tick - it) / 20.0 }
+        player.sendSystemMessage(GhostMessages.exit(player))
         logger.info(
             "{} exited AFK ghost mode at tick {} reason={} durationSeconds={}",
             player.gameProfile.name,
@@ -121,5 +125,11 @@ class GhostManager(
     private fun protectFromAccidents(player: ServerPlayer) {
         player.clearFire()
         player.resetFallDistance()
+    }
+
+    private fun sendEnterTitle(player: ServerPlayer) {
+        player.connection.send(ClientboundSetTitlesAnimationPacket(10, 50, 20))
+        player.connection.send(ClientboundSetTitleTextPacket(GhostMessages.enterTitle(player)))
+        player.connection.send(ClientboundSetSubtitleTextPacket(GhostMessages.enterSubtitle(player)))
     }
 }
