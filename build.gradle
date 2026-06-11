@@ -27,6 +27,9 @@ dependencies {
     compileOnly("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
         transitive = false
     }
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.4"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.4"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
 processResources {
@@ -44,6 +47,10 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
         jvmTarget = "25"
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 java {

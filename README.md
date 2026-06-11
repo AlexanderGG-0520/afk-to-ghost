@@ -9,13 +9,14 @@ Players sometimes step away briefly or become unable to react. AFK to Ghost exis
 ## Features
 
 - Server-side gameplay logic; joining players do not need to install the mod.
-- Detects inactivity from server-side movement and look direction.
+- Detects activity from intentional player input, interactions, chat, commands, and inventory actions.
 - Keeps the player's original game mode unchanged.
 - Applies invisibility during AFK Ghost mode when enabled.
 - Prevents incoming damage during AFK Ghost mode when enabled.
 - Clears fire and resets fall distance while ghosted.
 - Shows localized title and actionbar feedback.
-- Removes AFK Ghost mode when the player moves, looks around, interacts, attacks, chats, or runs a command.
+- Removes AFK Ghost mode when the player provides movement input, looks around, interacts, attacks, chats, runs a command, or changes inventory state.
+- Ignores passive movement from collision, knockback, water, pistons, vehicles, server correction, or teleportation.
 - Does not intentionally cancel the interaction that wakes the player.
 
 ## How It Works
@@ -29,7 +30,7 @@ This mod does not use Minecraft Spectator mode. It does not provide flight, wall
 ## Installation
 
 1. Install Fabric Loader for Minecraft 26.1.2 on the server or hosting client.
-2. Install the Fabric API and Fabric Language Kotlin versions used and tested by release `0.2.0`:
+2. Install the Fabric API and Fabric Language Kotlin versions used and tested by release `0.3.0`:
    - Fabric Loader `0.18.6`
    - Fabric API `0.151.0+26.1.2`
    - Fabric Language Kotlin `1.13.12+kotlin.2.4.0`
@@ -55,6 +56,16 @@ Fields:
 - `actionbar`: enables title/actionbar feedback, default `true`
 
 Mod Menu is optional. A singleplayer, e4mc, or LAN host can install Mod Menu and Cloth Config locally to edit these settings from the client. Dedicated server administrators can continue editing the configuration file directly.
+
+Runtime commands:
+
+- `/afktoghost config`
+- `/afktoghost config list`
+- `/afktoghost config get <key>`
+- `/afktoghost config set <key> <value>`
+- `/afktoghost config reload`
+
+Listing and reading configuration is available to all command users. Setting values and reloading the file require administrative command permission.
 
 ## Supported Languages
 

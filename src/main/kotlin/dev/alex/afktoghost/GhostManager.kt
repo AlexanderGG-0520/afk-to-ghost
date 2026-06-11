@@ -10,7 +10,7 @@ import org.slf4j.Logger
 import java.util.UUID
 
 class GhostManager(
-    private val config: AfkGhostConfig,
+    private var config: AfkGhostConfig,
     private val logger: Logger,
 ) {
     private val ghosts = mutableSetOf<UUID>()
@@ -105,6 +105,19 @@ class GhostManager(
 
     fun shouldBlockDamage(player: ServerPlayer): Boolean {
         return config.invulnerable && isGhost(player)
+    }
+
+    fun updateConfig(newConfig: AfkGhostConfig, players: Iterable<ServerPlayer>) {
+        val previousConfig = config
+        config = newConfig
+
+        if (previousConfig.invisibility && !newConfig.invisibility) {
+            for (player in players) {
+                if (isGhost(player) && hadInvisibility[player.uuid] == false) {
+                    player.removeEffect(MobEffects.INVISIBILITY)
+                }
+            }
+        }
     }
 
     private fun applyGhostEffects(player: ServerPlayer) {

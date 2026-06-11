@@ -3,6 +3,7 @@
   "package": "dev.alex.afktoghost.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "GhostActivityPacketMixin",
     "GhostDamageMixin"
   ],
   "injectors": {
