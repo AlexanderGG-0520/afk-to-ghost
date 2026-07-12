@@ -31,7 +31,7 @@ class AfkTracker(
     }
 
     fun markActivity(player: ServerPlayer, reason: String) {
-        val tick = player.level().server.tickCount.toLong()
+        val tick = player.server.tickCount.toLong()
         lastActiveTicks[player.uuid] = tick
         ghostManager.exit(player, tick, reason)
 

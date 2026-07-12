@@ -4,5 +4,6 @@ run/
 build/
 
 .gradle/
+.gradle-user-home/
 build/
 run/

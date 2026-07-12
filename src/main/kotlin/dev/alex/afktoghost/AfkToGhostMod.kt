@@ -8,6 +8,7 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.UUID
 
 object AfkToGhostMod : ModInitializer {
     const val MOD_ID = "afk-to-ghost"
@@ -20,6 +21,7 @@ object AfkToGhostMod : ModInitializer {
     @Volatile
     private var serverRunning = false
     private var activeServer: MinecraftServer? = null
+    private val playerLocales = mutableMapOf<UUID, String>()
 
     override fun onInitialize() {
         config = AfkGhostConfig.load(LOGGER)
@@ -27,7 +29,7 @@ object AfkToGhostMod : ModInitializer {
         afkTracker = AfkTracker(config, ghostManager, LOGGER)
 
         LOGGER.info(
-            "AFK to Ghost dependency baseline: Minecraft 26.1.2, Java 25, Fabric Loader 0.18.6, Fabric API 0.151.0+26.1.2, fabric-language-kotlin 1.13.12+kotlin.2.4.0, Loom 1.14.1, Gradle 9.2.0"
+            "AFK to Ghost dependency baseline: Minecraft 1.20.1, Java 17, Fabric Loader 0.15.11, Fabric API 0.92.2+1.20.1, fabric-language-kotlin 1.10.19+kotlin.1.9.23, Loom 1.6.12, Gradle 8.7"
         )
 
         ServerLifecycleEvents.SERVER_STARTED.register { server ->
@@ -44,6 +46,7 @@ object AfkToGhostMod : ModInitializer {
             val player = handler.player
             afkTracker.remove(player)
             ghostManager.remove(player, "disconnect", null)
+            playerLocales.remove(player.uuid)
         }
 
         ServerLifecycleEvents.SERVER_STOPPING.register { _ ->
@@ -54,6 +57,7 @@ object AfkToGhostMod : ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPED.register { _ ->
             serverRunning = false
             activeServer = null
+            playerLocales.clear()
         }
 
         GhostActivityEvents.register({ afkTracker }, LOGGER)
@@ -100,6 +104,15 @@ object AfkToGhostMod : ModInitializer {
         if (::afkTracker.isInitialized) {
             afkTracker.markActivity(player, reason)
         }
+    }
+
+    @JvmStatic
+    fun recordLocale(player: ServerPlayer, locale: String) {
+        playerLocales[player.uuid] = locale
+    }
+
+    fun localeFor(player: ServerPlayer): String {
+        return playerLocales[player.uuid] ?: "en_us"
     }
 
     private fun applyConfig(newConfig: AfkGhostConfig) {

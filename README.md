@@ -1,109 +1,89 @@
-# AFK to Ghost
+# AFK to Ghost for Minecraft 1.20.1
 
-AFK to Ghost is a server-side Fabric mod for Minecraft 26.1.2 that protects inactive players without changing their game mode.
-
-## Why This Mod Exists
-
-Players sometimes step away briefly or become unable to react. AFK to Ghost exists to prevent those players from dying simply because they are temporarily inactive, while allowing them to return to normal gameplay immediately.
+AFK to Ghost is a server-side Fabric mod that protects inactive players without changing their game mode. Version `0.3.0+1.20.1` is dedicated to Minecraft 1.20.1 and requires Java 17.
 
 ## Features
 
-- Server-side gameplay logic; joining players do not need to install the mod.
-- Detects activity from intentional player input, interactions, chat, commands, and inventory actions.
-- Keeps the player's original game mode unchanged.
-- Applies invisibility during AFK Ghost mode when enabled.
-- Prevents incoming damage during AFK Ghost mode when enabled.
+- Runs on dedicated servers and Fabric integrated servers, including singleplayer, LAN, and e4mc-style hosting.
+- Joining players do not need the mod.
+- Detects activity from player-originated keyboard input, camera rotation, interactions, attacks, chat, commands, boat paddling, and inventory actions.
+- Ignores externally caused position changes, including knockback, collisions, currents, pistons, vehicle movement, server corrections, and teleportation. Position-only movement packets never reset AFK state.
+- Keeps the player's game mode unchanged; it does not add spectator mode, flight, noclip, teleportation, or a custom game mode.
+- Optionally applies invisibility and blocks incoming damage while ghosted.
 - Clears fire and resets fall distance while ghosted.
-- Shows localized title and actionbar feedback.
-- Removes AFK Ghost mode when the player provides movement input, looks around, interacts, attacks, chats, runs a command, or changes inventory state.
-- Ignores passive movement from collision, knockback, water, pistons, vehicles, server correction, or teleportation.
-- Does not intentionally cancel the interaction that wakes the player.
+- Shows localized enter titles, repeated actionbar status, and an exit message, with English fallback.
 
-## How It Works
+## Exact Dependencies
 
-After the configured timeout, an inactive player enters AFK Ghost mode. The player remains in the world with their existing game mode, but is treated as a passive protected presence.
+Required server dependencies:
 
-When the player becomes active again, AFK Ghost mode is removed and normal gameplay resumes immediately.
+- Minecraft `1.20.1`
+- Java `17`
+- Fabric Loader `0.15.11`
+- Fabric API `0.92.2+1.20.1`
+- Fabric Language Kotlin `1.10.19+kotlin.1.9.23`
 
-This mod does not use Minecraft Spectator mode. It does not provide flight, wall clipping, spectator camera controls, or a custom game mode.
+Optional client configuration dependencies:
 
-## Installation
+- Mod Menu `7.2.2`
+- Cloth Config `11.1.118`
 
-1. Install Fabric Loader for Minecraft 26.1.2 on the server or hosting client.
-2. Install the Fabric API and Fabric Language Kotlin versions used and tested by release `0.3.0`:
-   - Fabric Loader `0.18.6`
-   - Fabric API `0.151.0+26.1.2`
-   - Fabric Language Kotlin `1.13.12+kotlin.2.4.0`
-3. For a dedicated server, place the AFK to Ghost jar in the server's `mods` directory.
-4. For e4mc or LAN hosting, place the jar in the hosting player's client `mods` directory.
-5. Start the server or hosted world.
-6. Joining players do not need to install the mod.
+The build uses Fabric Loom `1.6.12`, Kotlin Gradle plugin `1.9.23`, Mojang official mappings, and Gradle `8.7`.
 
-## Configuration
+For a dedicated server, install the mod and its three required Fabric dependencies in the server's `mods` directory. For singleplayer, LAN, or e4mc-style hosting, install them in the hosting client's `mods` directory. Other connecting clients need no installation.
 
-The config file is created at:
+Mod Menu and Cloth Config are optional and client-only. Install both on a hosting client to edit the configuration through Mod Menu. They are not needed on a dedicated server.
 
-```text
-config/afk-to-ghost.json
-```
+## Configuration and Commands
 
-Fields:
+The validated configuration is stored at `config/afk-to-ghost.json`:
 
-- `timeoutSeconds`: AFK timeout in seconds, default `300`
-- `debug`: enables diagnostic logging, default `true`
-- `invisibility`: enables invisibility during AFK Ghost mode, default `true`
-- `invulnerable`: enables damage protection during AFK Ghost mode, default `true`
-- `actionbar`: enables title/actionbar feedback, default `true`
+- `timeoutSeconds` (default `300`, whole number at least `1`)
+- `debug` (default `true`)
+- `invisibility` (default `true`)
+- `invulnerable` (default `true`)
+- `actionbar` (default `true`)
 
-Mod Menu is optional. A singleplayer, e4mc, or LAN host can install Mod Menu and Cloth Config locally to edit these settings from the client. Dedicated server administrators can continue editing the configuration file directly.
+Unknown keys, invalid types, fractional timeouts, and out-of-range timeouts are rejected. A failed runtime reload leaves the active configuration unchanged.
 
 Runtime commands:
 
 - `/afktoghost config`
 - `/afktoghost config list`
 - `/afktoghost config get <key>`
-- `/afktoghost config set <key> <value>`
-- `/afktoghost config reload`
+- `/afktoghost config set <key> <value>` — operator permission level 2 required
+- `/afktoghost config reload` — operator permission level 2 required
 
-Listing and reading configuration is available to all command users. Setting values and reloading the file require administrative command permission.
+The restricted command nodes are hidden from suggestions for users without permission.
 
-## Supported Languages
+## Version-specific Protocol Notes
 
-AFK to Ghost is fully server-side and sends resolved text using the locale reported by each player.
+Minecraft 1.20.1 reports movement intent with forward/strafe floats plus jump and sneak flags. AFK to Ghost reads those inputs directly and does not infer activity from coordinates or velocity. Rotation counts only when a rotation-bearing packet contains an actual yaw or pitch change.
 
-Supported UI languages:
+The newer bundle-item-selection packet and container-slot-state packet are absent from the Minecraft 1.20.1 server protocol, so this branch has no hooks for them. It instead covers inventory actions that exist in 1.20.1, including clicks, buttons, closing, recipe placement, creative slots, item renaming, pick-block, book editing, trade selection, and beacon selection.
 
-- English
-- Japanese
-- Simplified Chinese
-- Traditional Chinese
-- Korean
+## Building
 
-English is used as the fallback for unsupported or unavailable locales.
-
-## Compatibility
-
-- Minecraft: `26.1.2`
-- Mod loader: Fabric
-- Environment: dedicated server or integrated server hosted from a Fabric client
-- Implementation language: Kotlin
-- Java target: `25`
-
-This mod does not claim exhaustive compatibility with other mods.
-
-## Building From Source
-
-Build with:
+Use Java 17 and run:
 
 ```bash
-./gradlew build
+./gradlew clean test build
 ```
 
-Release jars are produced under:
+The release jar is written to `build/libs/afk-to-ghost-0.3.0+1.20.1.jar`.
 
-```text
-build/libs/
-```
+## Manual Verification Checklist
+
+1. A stationary player enters Ghost mode after the timeout.
+2. Knockback, currents, pistons, collisions, vehicles, teleports, corrections, and position-only movement packets do not wake the player.
+3. Keyboard movement, jump, sneak, actual camera rotation, boat paddling, interaction, attacks, swings, chat, commands, and inventory actions wake the player without cancelling the action.
+4. Incoming damage is blocked only for a ghost when `invulnerable` is enabled; it works normally after exit and for all non-ghost players.
+5. Fire and fall distance are cleared while ghosted.
+6. Mod-introduced invisibility is removed on exit, while invisibility present before entry is preserved.
+7. The player's game mode never changes.
+8. Non-operators cannot see or execute `config set` or `config reload`.
+9. Invalid reloads fail without replacing the active config.
+10. An unmodded client can connect and play normally.
 
 ## License
 

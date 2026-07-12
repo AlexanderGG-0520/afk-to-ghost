@@ -33,7 +33,7 @@ class GhostManager(
             "{} entered AFK ghost mode at tick {} with game mode {}",
             player.gameProfile.name,
             tick,
-            player.gameMode(),
+            player.gameMode.gameModeForPlayer,
         )
     }
 
@@ -46,7 +46,7 @@ class GhostManager(
         protectFromAccidents(player)
 
         if (config.actionbar && tick % 40L == 0L) {
-            player.sendOverlayMessage(GhostMessages.actionbar(player))
+            player.displayClientMessage(GhostMessages.actionbar(player), true)
         }
     }
 
@@ -125,7 +125,7 @@ class GhostManager(
             player.addEffect(
                 MobEffectInstance(
                     MobEffects.INVISIBILITY,
-                    MobEffectInstance.INFINITE_DURATION,
+                    20 * 60,
                     0,
                     true,
                     false,

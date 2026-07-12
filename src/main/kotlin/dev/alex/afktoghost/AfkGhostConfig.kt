@@ -22,7 +22,7 @@ data class AfkGhostConfig(
         get() = timeoutSeconds.coerceAtLeast(1) * 20L
 
     fun valueAsString(key: String): String? {
-        return entries().firstOrNull { it.key == key }?.format(this)
+        return entries().firstOrNull { it.key == key }?.let { it.format(this) }
     }
 
     fun withParsedValue(key: String, rawValue: String): Result<AfkGhostConfig> {

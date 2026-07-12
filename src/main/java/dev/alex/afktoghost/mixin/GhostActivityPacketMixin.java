@@ -5,18 +5,21 @@ import dev.alex.afktoghost.GhostActivityDecisions;
 import net.minecraft.network.protocol.game.ServerboundContainerButtonClickPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
-import net.minecraft.network.protocol.game.ServerboundContainerSlotStateChangedPacket;
+import net.minecraft.network.protocol.game.ServerboundEditBookPacket;
+import net.minecraft.network.protocol.game.ServerboundClientInformationPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.network.protocol.game.ServerboundPaddleBoatPacket;
+import net.minecraft.network.protocol.game.ServerboundPickItemPacket;
 import net.minecraft.network.protocol.game.ServerboundPlaceRecipePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerAbilitiesPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
 import net.minecraft.network.protocol.game.ServerboundRenameItemPacket;
+import net.minecraft.network.protocol.game.ServerboundSelectTradePacket;
+import net.minecraft.network.protocol.game.ServerboundSetBeaconPacket;
 import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
-import net.minecraft.network.protocol.game.ServerboundSelectBundleItemPacket;
 import net.minecraft.network.protocol.game.ServerboundSwingPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -33,7 +36,8 @@ public abstract class GhostActivityPacketMixin {
 
     @Inject(method = "handlePlayerInput", at = @At("HEAD"))
     private void afkToGhost$markKeyboardInput(ServerboundPlayerInputPacket packet, CallbackInfo ci) {
-        if (GhostActivityDecisions.hasIntentionalMovementInput(packet.input())) {
+        if (GhostActivityDecisions.hasIntentionalMovementInput(
+                packet.getXxa(), packet.getZza(), packet.isJumping(), packet.isShiftKeyDown())) {
             AfkToGhostMod.recordActivity(player, "player input");
         }
     }
@@ -93,11 +97,6 @@ public abstract class GhostActivityPacketMixin {
         AfkToGhostMod.recordActivity(player, "container close");
     }
 
-    @Inject(method = "handleContainerSlotStateChanged", at = @At("HEAD"))
-    private void afkToGhost$markContainerSlotState(ServerboundContainerSlotStateChangedPacket packet, CallbackInfo ci) {
-        AfkToGhostMod.recordActivity(player, "container slot state");
-    }
-
     @Inject(method = "handlePlaceRecipe", at = @At("HEAD"))
     private void afkToGhost$markPlaceRecipe(ServerboundPlaceRecipePacket packet, CallbackInfo ci) {
         AfkToGhostMod.recordActivity(player, "place recipe");
@@ -113,14 +112,34 @@ public abstract class GhostActivityPacketMixin {
         AfkToGhostMod.recordActivity(player, "rename item");
     }
 
-    @Inject(method = "handleBundleItemSelectedPacket", at = @At("HEAD"))
-    private void afkToGhost$markBundleItemSelected(ServerboundSelectBundleItemPacket packet, CallbackInfo ci) {
-        AfkToGhostMod.recordActivity(player, "bundle item selected");
+    @Inject(method = "handlePickItem", at = @At("HEAD"))
+    private void afkToGhost$markPickItem(ServerboundPickItemPacket packet, CallbackInfo ci) {
+        AfkToGhostMod.recordActivity(player, "pick item");
+    }
+
+    @Inject(method = "handleEditBook", at = @At("HEAD"))
+    private void afkToGhost$markEditBook(ServerboundEditBookPacket packet, CallbackInfo ci) {
+        AfkToGhostMod.recordActivity(player, "edit book");
+    }
+
+    @Inject(method = "handleSelectTrade", at = @At("HEAD"))
+    private void afkToGhost$markSelectTrade(ServerboundSelectTradePacket packet, CallbackInfo ci) {
+        AfkToGhostMod.recordActivity(player, "select trade");
+    }
+
+    @Inject(method = "handleSetBeaconPacket", at = @At("HEAD"))
+    private void afkToGhost$markSetBeacon(ServerboundSetBeaconPacket packet, CallbackInfo ci) {
+        AfkToGhostMod.recordActivity(player, "set beacon");
     }
 
     @Inject(method = "handlePlayerAbilities", at = @At("HEAD"))
     private void afkToGhost$markPlayerAbilities(ServerboundPlayerAbilitiesPacket packet, CallbackInfo ci) {
         AfkToGhostMod.recordActivity(player, "player abilities");
+    }
+
+    @Inject(method = "handleClientInformation", at = @At("HEAD"))
+    private void afkToGhost$captureLocale(ServerboundClientInformationPacket packet, CallbackInfo ci) {
+        AfkToGhostMod.recordLocale(player, packet.language());
     }
 
 }

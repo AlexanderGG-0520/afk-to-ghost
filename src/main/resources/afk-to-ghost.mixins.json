@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "dev.alex.afktoghost.mixin",
-  "compatibilityLevel": "JAVA_25",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
     "GhostActivityPacketMixin",
     "GhostDamageMixin"

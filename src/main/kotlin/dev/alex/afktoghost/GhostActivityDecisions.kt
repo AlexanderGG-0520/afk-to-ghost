@@ -1,20 +1,13 @@
 package dev.alex.afktoghost
 
-import net.minecraft.world.entity.player.Input
 import kotlin.math.abs
 
 object GhostActivityDecisions {
     private const val LOOK_THRESHOLD = 0.1f
 
     @JvmStatic
-    fun hasIntentionalMovementInput(input: Input): Boolean {
-        return input.forward() ||
-            input.backward() ||
-            input.left() ||
-            input.right() ||
-            input.jump() ||
-            input.shift() ||
-            input.sprint()
+    fun hasIntentionalMovementInput(xxa: Float, zza: Float, jumping: Boolean, shiftKeyDown: Boolean): Boolean {
+        return xxa != 0.0f || zza != 0.0f || jumping || shiftKeyDown
     }
 
     @JvmStatic

@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.0+1.20.1
+
+- Backported AFK to Ghost 0.3.0 to Minecraft 1.20.1 and Java 17.
+- Adapted activity packets, damage protection, commands, messages, and optional client configuration to the 1.20.1 APIs.
+- Preserved input-only AFK detection; externally caused position changes remain ignored.
+- Removed newer bundle-selection and container-slot-state packet hooks that do not exist in 1.20.1.
+
 ## v0.3.0
 
 ### Added

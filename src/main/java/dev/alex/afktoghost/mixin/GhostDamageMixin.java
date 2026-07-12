@@ -1,7 +1,6 @@
 package dev.alex.afktoghost.mixin;
 
 import dev.alex.afktoghost.AfkToGhostMod;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,9 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayer.class)
 public abstract class GhostDamageMixin {
-    @Inject(method = "hurtServer", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
     private void afkToGhost$blockGhostDamage(
-            ServerLevel level,
             DamageSource damageSource,
             float amount,
             CallbackInfoReturnable<Boolean> cir

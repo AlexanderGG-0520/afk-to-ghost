@@ -1,6 +1,5 @@
 package dev.alex.afktoghost;
 
-import net.minecraft.world.entity.player.Input;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -9,15 +8,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class GhostActivityDecisionsTest {
     @Test
     void emptyInputIsNotActivity() {
-        assertFalse(GhostActivityDecisions.hasIntentionalMovementInput(Input.EMPTY));
+        assertFalse(GhostActivityDecisions.hasIntentionalMovementInput(0.0f, 0.0f, false, false));
     }
 
     @Test
     void directionalAndActionInputsAreActivity() {
-        assertTrue(GhostActivityDecisions.hasIntentionalMovementInput(new Input(true, false, false, false, false, false, false)));
-        assertTrue(GhostActivityDecisions.hasIntentionalMovementInput(new Input(false, false, false, false, true, false, false)));
-        assertTrue(GhostActivityDecisions.hasIntentionalMovementInput(new Input(false, false, false, false, false, true, false)));
-        assertTrue(GhostActivityDecisions.hasIntentionalMovementInput(new Input(false, false, false, false, false, false, true)));
+        assertTrue(GhostActivityDecisions.hasIntentionalMovementInput(1.0f, 0.0f, false, false));
+        assertTrue(GhostActivityDecisions.hasIntentionalMovementInput(-1.0f, 0.0f, false, false));
+        assertTrue(GhostActivityDecisions.hasIntentionalMovementInput(0.0f, 1.0f, false, false));
+        assertTrue(GhostActivityDecisions.hasIntentionalMovementInput(0.0f, -1.0f, false, false));
+        assertTrue(GhostActivityDecisions.hasIntentionalMovementInput(0.0f, 0.0f, true, false));
+        assertTrue(GhostActivityDecisions.hasIntentionalMovementInput(0.0f, 0.0f, false, true));
     }
 
     @Test

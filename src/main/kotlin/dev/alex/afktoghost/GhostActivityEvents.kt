@@ -7,13 +7,14 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionResult
+import net.minecraft.world.InteractionResultHolder
 import org.slf4j.Logger
 
 object GhostActivityEvents {
     fun register(afkTracker: () -> AfkTracker, logger: Logger) {
-        UseItemCallback.EVENT.register { player, _, _ ->
+        UseItemCallback.EVENT.register { player, _, hand ->
             wake(player, afkTracker(), "item use")
-            InteractionResult.PASS
+            InteractionResultHolder.pass(player.getItemInHand(hand))
         }
 
         UseBlockCallback.EVENT.register { player, _, _, _ ->

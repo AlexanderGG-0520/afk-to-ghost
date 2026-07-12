@@ -22,9 +22,7 @@ object GhostMessages {
     }
 
     private fun messagesFor(player: ServerPlayer): Bundle {
-        val locale = player.clientInformation()
-            .language()
-            .lowercase(Locale.ROOT)
+        val locale = AfkToGhostMod.localeFor(player).lowercase(Locale.ROOT)
 
         return when {
             locale.startsWith("ja_") -> Japanese

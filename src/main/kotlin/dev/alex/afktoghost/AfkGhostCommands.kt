@@ -40,7 +40,7 @@ object AfkGhostCommands {
                             )
                             .then(
                                 Commands.literal("set")
-                                    .requires { source -> Commands.hasPermission<CommandSourceStack>(Commands.LEVEL_ADMINS).test(source) }
+                                    .requires { source -> source.hasPermission(2) }
                                     .then(
                                         Commands.argument("key", StringArgumentType.word())
                                             .suggests { _, builder ->
@@ -55,7 +55,7 @@ object AfkGhostCommands {
                             )
                             .then(
                                 Commands.literal("reload")
-                                    .requires { source -> Commands.hasPermission<CommandSourceStack>(Commands.LEVEL_ADMINS).test(source) }
+                                    .requires { source -> source.hasPermission(2) }
                                     .executes(::reloadConfig)
                             )
                     )
