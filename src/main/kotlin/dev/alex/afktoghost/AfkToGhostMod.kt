@@ -29,7 +29,7 @@ object AfkToGhostMod : ModInitializer {
         afkTracker = AfkTracker(config, ghostManager, LOGGER)
 
         LOGGER.info(
-            "AFK to Ghost dependency baseline: Minecraft 1.20.1, Java 17, Fabric Loader 0.15.11, Fabric API 0.92.2+1.20.1, fabric-language-kotlin 1.10.19+kotlin.1.9.23, Loom 1.6.12, Gradle 8.7"
+            "AFK to Ghost dependency baseline: Minecraft 1.21.1, Java 21, Fabric Loader 0.19.3, Fabric API 0.116.15+1.21.1, fabric-language-kotlin 1.13.13+kotlin.2.4.10, Loom 1.14.1, Gradle 9.2.0"
         )
 
         ServerLifecycleEvents.SERVER_STARTED.register { server ->
