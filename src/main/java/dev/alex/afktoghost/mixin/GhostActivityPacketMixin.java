@@ -139,7 +139,7 @@ public abstract class GhostActivityPacketMixin {
 
     @Inject(method = "handleClientInformation", at = @At("HEAD"))
     private void afkToGhost$captureLocale(ServerboundClientInformationPacket packet, CallbackInfo ci) {
-        AfkToGhostMod.recordLocale(player, packet.language());
+        AfkToGhostMod.recordLocale(player, packet.information().language());
     }
 
 }
