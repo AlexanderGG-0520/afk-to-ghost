@@ -2,11 +2,11 @@ package dev.alex.afktoghost.mixin;
 
 import dev.alex.afktoghost.AfkToGhostMod;
 import dev.alex.afktoghost.GhostActivityDecisions;
+import net.minecraft.network.protocol.common.ServerboundClientInformationPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerButtonClickPacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClosePacket;
 import net.minecraft.network.protocol.game.ServerboundContainerClickPacket;
 import net.minecraft.network.protocol.game.ServerboundEditBookPacket;
-import net.minecraft.network.protocol.game.ServerboundClientInformationPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.network.protocol.game.ServerboundPaddleBoatPacket;
 import net.minecraft.network.protocol.game.ServerboundPickItemPacket;
