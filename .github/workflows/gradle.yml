@@ -29,13 +29,14 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build and test
-        run: ./gradlew clean test build --stacktrace
+        run: ./gradlew clean test build --stacktrace --warning-mode all
 
       - name: Smoke test dedicated server startup
         shell: bash
         run: |
           mkdir -p run
           printf 'eula=true\n' > run/eula.txt
+          : > run/server.properties
           : > server-smoke.log
 
           setsid ./gradlew --no-daemon runServer --stacktrace > server-smoke.log 2>&1 &
