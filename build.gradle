@@ -4,8 +4,16 @@ plugins {
     id 'maven-publish'
 }
 
-version = project.mod_version
-group = project.maven_group
+def modVersionValue = providers.gradleProperty("mod_version").get()
+def mavenGroupValue = providers.gradleProperty("maven_group").get()
+def archiveBaseNameValue = providers.gradleProperty("archives_base_name").get()
+
+version = modVersionValue
+group = mavenGroupValue
+
+base {
+    archivesName = archiveBaseNameValue
+}
 
 repositories {
     maven { url = "https://maven.fabricmc.net/" }
@@ -36,9 +44,9 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", modVersionValue
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand "version": modVersionValue
     }
 }
 
@@ -64,7 +72,7 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.base.archivesName.get()}" }
+        rename { "${it}_${archiveBaseNameValue}" }
     }
 }
 
