@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.0+1.21.1
+
+- Backported AFK to Ghost 0.3.0 to Minecraft 1.21.1 and Java 21.
+- Updated the build to Fabric Loader 0.19.3, Fabric API 0.116.15+1.21.1, Fabric Language Kotlin 1.13.13+kotlin.2.4.10, Loom 1.14.1, and Gradle 9.2.0.
+- Updated optional client configuration support to Mod Menu 11.0.4 and Cloth Config 15.0.140.
+- Preserved input-only AFK detection; externally caused position changes remain ignored.
+- Retained dedicated-server, integrated-server, LAN, and e4mc-style hosting support.
+
 ## v0.3.0+1.20.1
 
 - Backported AFK to Ghost 0.3.0 to Minecraft 1.20.1 and Java 17.
