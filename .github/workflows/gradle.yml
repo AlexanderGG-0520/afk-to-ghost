@@ -31,6 +31,51 @@ jobs:
       - name: Build and test
         run: ./gradlew clean test build --stacktrace
 
+      - name: Smoke test dedicated server startup
+        shell: bash
+        run: |
+          mkdir -p run
+          printf 'eula=true\n' > run/eula.txt
+          : > server-smoke.log
+
+          setsid ./gradlew --no-daemon runServer --stacktrace > server-smoke.log 2>&1 &
+          server_pid=$!
+
+          cleanup() {
+            if kill -0 "$server_pid" 2>/dev/null; then
+              kill -TERM -- "-$server_pid" 2>/dev/null || true
+              sleep 2
+              kill -KILL -- "-$server_pid" 2>/dev/null || true
+            fi
+          }
+          trap cleanup EXIT
+
+          for _ in $(seq 1 120); do
+            if grep -Eq 'Done \([0-9.]+s\)!' server-smoke.log; then
+              cat server-smoke.log
+              exit 0
+            fi
+
+            if grep -Eq 'InvalidInjectionException|Mixin apply failed|MixinTransformerError|Mod resolution encountered|Failed to start the minecraft server|Exception in server tick loop' server-smoke.log; then
+              cat server-smoke.log
+              exit 1
+            fi
+
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              status=0
+              wait "$server_pid" || status=$?
+              cat server-smoke.log
+              echo "Server process exited before reaching the ready state (status $status)." >&2
+              exit 1
+            fi
+
+            sleep 1
+          done
+
+          cat server-smoke.log
+          echo "Server did not reach ready state within 120 seconds." >&2
+          exit 1
+
       - name: Upload built JARs
         uses: actions/upload-artifact@v7
         with:
