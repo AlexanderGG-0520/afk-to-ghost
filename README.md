@@ -1,6 +1,6 @@
-# AFK to Ghost for Minecraft 1.20.1
+# AFK to Ghost for Minecraft 1.21.1
 
-AFK to Ghost is a server-side Fabric mod that protects inactive players without changing their game mode. Version `0.3.0+1.20.1` is dedicated to Minecraft 1.20.1 and requires Java 17.
+AFK to Ghost is a server-side Fabric mod that protects inactive players without changing their game mode. Version `0.3.0+1.21.1` is dedicated to Minecraft 1.21.1 and requires Java 21.
 
 ## Features
 
@@ -17,18 +17,18 @@ AFK to Ghost is a server-side Fabric mod that protects inactive players without 
 
 Required server dependencies:
 
-- Minecraft `1.20.1`
-- Java `17`
-- Fabric Loader `0.15.11`
-- Fabric API `0.92.2+1.20.1`
-- Fabric Language Kotlin `1.10.19+kotlin.1.9.23`
+- Minecraft `1.21.1`
+- Java `21`
+- Fabric Loader `0.19.3`
+- Fabric API `0.116.15+1.21.1`
+- Fabric Language Kotlin `1.13.13+kotlin.2.4.10`
 
 Optional client configuration dependencies:
 
-- Mod Menu `7.2.2`
-- Cloth Config `11.1.118`
+- Mod Menu `11.0.4`
+- Cloth Config `15.0.140`
 
-The build uses Fabric Loom `1.6.12`, Kotlin Gradle plugin `1.9.23`, Mojang official mappings, and Gradle `8.7`.
+The build uses Fabric Loom `1.14.1`, Kotlin Gradle plugin `2.4.10`, Mojang official mappings, and Gradle `9.2.0`.
 
 For a dedicated server, install the mod and its three required Fabric dependencies in the server's `mods` directory. For singleplayer, LAN, or e4mc-style hosting, install them in the hosting client's `mods` directory. Other connecting clients need no installation.
 
@@ -58,19 +58,19 @@ The restricted command nodes are hidden from suggestions for users without permi
 
 ## Version-specific Protocol Notes
 
-Minecraft 1.20.1 reports movement intent with forward/strafe floats plus jump and sneak flags. AFK to Ghost reads those inputs directly and does not infer activity from coordinates or velocity. Rotation counts only when a rotation-bearing packet contains an actual yaw or pitch change.
+Minecraft 1.21.1 reports movement intent with forward/strafe values plus jump and sneak flags. AFK to Ghost reads those inputs directly and does not infer activity from coordinates or velocity. Rotation counts only when a rotation-bearing packet contains an actual yaw or pitch change.
 
-The newer bundle-item-selection packet and container-slot-state packet are absent from the Minecraft 1.20.1 server protocol, so this branch has no hooks for them. It instead covers inventory actions that exist in 1.20.1, including clicks, buttons, closing, recipe placement, creative slots, item renaming, pick-block, book editing, trade selection, and beacon selection.
+Inventory activity coverage includes container clicks and buttons, closing containers, recipe placement, creative slots, item renaming, pick-block, book editing, trade selection, and beacon selection.
 
 ## Building
 
-Use Java 17 and run:
+Use Java 21 and run:
 
 ```bash
 ./gradlew clean test build
 ```
 
-The release jar is written to `build/libs/afk-to-ghost-0.3.0+1.20.1.jar`.
+The release jar is written to `build/libs/afk-to-ghost-0.3.0+1.21.1.jar`.
 
 ## Manual Verification Checklist
 
