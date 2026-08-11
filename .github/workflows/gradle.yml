@@ -1,43 +1,92 @@
 name: Build
 
 on:
-push:
-branches:
-- main
-pull_request:
-branches:
-- main
-workflow_dispatch:
+  push:
+    branches:
+      - main
+      - mc26.2/fabric/dev
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
-contents: read
+  contents: read
 
 jobs:
-build:
-runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-steps:
-  - name: Check out repository
-    uses: actions/checkout@v4
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
 
-  - name: Set up Java 25
-    uses: actions/setup-java@v4
-    with:
-      distribution: temurin
-      java-version: "25"
+      - name: Set up Java 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
 
-  - name: Set up Gradle
-    uses: gradle/actions/setup-gradle@v4
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
 
-  - name: Make Gradle Wrapper executable
-    run: chmod +x ./gradlew
+      - name: Make Gradle Wrapper executable
+        run: chmod +x ./gradlew
 
-  - name: Build
-    run: ./gradlew clean build --stacktrace
+      - name: Build and test
+        run: ./gradlew clean test build --stacktrace --warning-mode all
 
-  - name: Upload built JARs
-    uses: actions/upload-artifact@v4
-    with:
-      name: afk-to-ghost
-      path: build/libs/*.jar
-      if-no-files-found: error
+      - name: Smoke test dedicated server startup
+        shell: bash
+        run: |
+          mkdir -p run
+          printf 'eula=true\n' > run/eula.txt
+          : > run/server.properties
+          : > server-smoke.log
+
+          setsid ./gradlew --no-daemon runServer --stacktrace > server-smoke.log 2>&1 &
+          server_pid=$!
+
+          cleanup() {
+            if kill -0 "$server_pid" 2>/dev/null; then
+              kill -TERM -- "-$server_pid" 2>/dev/null || true
+              sleep 2
+              kill -KILL -- "-$server_pid" 2>/dev/null || true
+            fi
+          }
+          trap cleanup EXIT
+
+          for _ in $(seq 1 120); do
+            if grep -Eq 'Done \([0-9.]+s\)!' server-smoke.log; then
+              cat server-smoke.log
+              exit 0
+            fi
+
+            if grep -Eq 'InvalidInjectionException|Mixin apply failed|MixinTransformerError|Mod resolution encountered|Failed to start the minecraft server|Exception in server tick loop' server-smoke.log; then
+              cat server-smoke.log
+              exit 1
+            fi
+
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              status=0
+              wait "$server_pid" || status=$?
+              cat server-smoke.log
+              echo "Server process exited before reaching the ready state (status $status)." >&2
+              exit 1
+            fi
+
+            sleep 1
+          done
+
+          cat server-smoke.log
+          echo "Server did not reach ready state within 120 seconds." >&2
+          exit 1
+
+      - name: Upload release JAR
+        uses: actions/upload-artifact@v7
+        with:
+          name: afk-to-ghost-26.2
+          path: |
+            build/libs/*.jar
+            !build/libs/*-sources.jar
+          if-no-files-found: error
