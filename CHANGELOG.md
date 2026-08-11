@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.3.0+26.2
+
+### Compatibility
+
+- Added Minecraft 26.2 support.
+- Updated to Java 25.
+- Updated Fabric Loader baseline to 0.19.3.
+- Updated Fabric API baseline to 0.156.0+26.2.
+- Updated Fabric Language Kotlin baseline to 1.13.13+kotlin.2.4.10.
+- Updated optional Cloth Config support to 26.2.155 and Mod Menu support to 19.0.0-alpha.1.
+- Preserved the complete AFK to Ghost 0.3.0 gameplay behavior from the 26.1.2 build without requiring source-level packet or Mixin changes.
+- Verified clean compilation, automated tests, remapping, and Minecraft 26.2 dedicated-server startup in GitHub Actions.
+
 ## v0.3.0
 
 ### Added
