@@ -1,6 +1,6 @@
 # AFK to Ghost
 
-AFK to Ghost is a server-side Fabric mod for Minecraft 26.1.2 that protects inactive players without changing their game mode.
+AFK to Ghost is a server-side Fabric mod for Minecraft 26.2 that protects inactive players without changing their game mode.
 
 ## Why This Mod Exists
 
@@ -29,11 +29,11 @@ This mod does not use Minecraft Spectator mode. It does not provide flight, wall
 
 ## Installation
 
-1. Install Fabric Loader for Minecraft 26.1.2 on the server or hosting client.
-2. Install the Fabric API and Fabric Language Kotlin versions used and tested by release `0.3.0`:
-   - Fabric Loader `0.18.6`
-   - Fabric API `0.151.0+26.1.2`
-   - Fabric Language Kotlin `1.13.12+kotlin.2.4.0`
+1. Install Fabric Loader for Minecraft 26.2 on the server or hosting client.
+2. Install the Fabric API and Fabric Language Kotlin versions used and tested by release `0.3.0+26.2`:
+   - Fabric Loader `0.19.3`
+   - Fabric API `0.156.0+26.2`
+   - Fabric Language Kotlin `1.13.13+kotlin.2.4.10`
 3. For a dedicated server, place the AFK to Ghost jar in the server's `mods` directory.
 4. For e4mc or LAN hosting, place the jar in the hosting player's client `mods` directory.
 5. Start the server or hosted world.
@@ -83,7 +83,7 @@ English is used as the fallback for unsupported or unavailable locales.
 
 ## Compatibility
 
-- Minecraft: `26.1.2`
+- Minecraft: `26.2`
 - Mod loader: Fabric
 - Environment: dedicated server or integrated server hosted from a Fabric client
 - Implementation language: Kotlin
