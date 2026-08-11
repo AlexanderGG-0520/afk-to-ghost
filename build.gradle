@@ -1,11 +1,14 @@
 plugins {
     id 'net.fabricmc.fabric-loom' version "${loom_version}"
-    id 'org.jetbrains.kotlin.jvm' version '2.4.0'
+    id 'org.jetbrains.kotlin.jvm' version "${kotlin_version}"
     id 'maven-publish'
 }
 
 version = project.mod_version
 group = project.maven_group
+
+def modVersion = providers.gradleProperty("mod_version")
+def archivesName = providers.gradleProperty("archives_base_name")
 
 repositories {
     maven { url = "https://maven.fabricmc.net/" }
@@ -33,9 +36,9 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", modVersion
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand "version": modVersion.get()
     }
 }
 
@@ -43,9 +46,9 @@ tasks.withType(JavaCompile).configureEach {
     it.options.release = 25
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        jvmTarget = "25"
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_25)
     }
 }
 
@@ -58,9 +61,10 @@ java {
     sourceCompatibility = JavaVersion.VERSION_25
     targetCompatibility = JavaVersion.VERSION_25
 }
+
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.base.archivesName.get()}" }
+        rename { "${it}_${archivesName.get()}" }
     }
 }
 
